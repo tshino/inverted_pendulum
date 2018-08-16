@@ -1,8 +1,8 @@
-﻿# Simple Simulation
+﻿![sample_output.gif](sample_output.gif)
+
+# Simple Simulation
 
 This is an experimental implementation of simulation of an inverted pendulum.
-
-![sample_output.gif](sample_output.gif)
 
 ## Why I made this
 

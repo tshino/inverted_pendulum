@@ -1,4 +1,8 @@
-﻿![sample_output.gif](sample_output.gif)
+﻿![sample_output.gif](sample_output.gif)  
+Sample result 1 (Adam Optimizer)
+
+![sample_output_scipy.gif](sample_output_scipy.gif)  
+Sample result 2 (BFGS from Scipy Optimizer)
 
 # Optimization of State Feedback
 

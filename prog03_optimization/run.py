@@ -102,6 +102,8 @@ def run_simulation_tf(initial_state, controller, duration = SIM_DURATION):
   return ip.state
 
 
+USE_SCIPY_OPTIMIZER = True
+
 if __name__ == '__main__':
   print('...creating simulator model')
   
@@ -117,9 +119,13 @@ if __name__ == '__main__':
   
   clamped_last_state = tf.clip_by_value(last_state, -1, 1)
   loss = tf.reduce_mean(tf.square(clamped_last_state))
-  optimizer = tf.train.AdamOptimizer(0.5)
-  #optimizer = tf.train.GradientDescentOptimizer(0.5)
-  train = optimizer.minimize(loss)
+  
+  if USE_SCIPY_OPTIMIZER:
+    optimizer = tf.contrib.opt.ScipyOptimizerInterface(loss)
+  else:
+    optimizer = tf.train.AdamOptimizer(0.5)
+    #optimizer = tf.train.GradientDescentOptimizer(0.5)
+    train = optimizer.minimize(loss)
   
   print('...starting ML session')
   
@@ -134,11 +140,16 @@ if __name__ == '__main__':
   
   print('...training')
   
-  for i in range(1000):
-    print('=== epoch #%d ===' % (i + 1))
-    sess.run(train)
+  if USE_SCIPY_OPTIMIZER:
+    optimizer.minimize(sess)
     print(' gain =', sess.run(gain))
     print(' loss =', sess.run(loss))
+  else:
+    for i in range(1000):
+      print('=== epoch #%d ===' % (i + 1))
+      sess.run(train)
+      print(' gain =', sess.run(gain))
+      print(' loss =', sess.run(loss))
   
   print('...making animation using trained controller')
   

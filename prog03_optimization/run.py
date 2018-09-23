@@ -15,22 +15,17 @@ class StateFeedbackController:
   def process(self, state):
     force = np.dot(state, self.gain)
     force = np.clip(force, -500, 500)
-    
     return force
 
 # State Feedback Controller for TensorFlow
 class StateFeedbackControllerTF:
 
   def __init__(self, gain):
-    #self.gain = tf.constant(gain.astype(np.float))
     self.gain = gain
 
   def process(self, state):
-    force = state * self.gain
-    #force = force[0] + force[1] + force[2] + force[3];
-    force = force[:,0] + force[:,1] + force[:,2] + force[:,3];
+    force = tf.reduce_sum(state * self.gain, axis=1)
     force = tf.clip_by_value(force, -500, 500)
-    
     return force
 
 

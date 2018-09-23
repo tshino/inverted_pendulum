@@ -45,8 +45,8 @@ class InvertedPendulumTF(SimulatorBase):
     self.force = None
 
   # Calculate derivative
-  # in:  state array      [x, xdot, a, adot]
-  # out: derivative array [xdot, xddot, adot, addot]
+  # in:  state array      [x, x', a, a']
+  # out: derivative array [x', x'', a', a'']
   def deriv(self, state):
     m1 = self.model.CART.mass
     m2 = self.model.POLE.mass
@@ -54,7 +54,6 @@ class InvertedPendulumTF(SimulatorBase):
     h = self.model.POLE.height / 2
     
     x, xdot, a, adot = tf.unstack(state, axis=1)
-    
     c = tf.cos(a)
     s = tf.sin(a)
     

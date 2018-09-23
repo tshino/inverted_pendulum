@@ -41,12 +41,12 @@ class InvertedPendulum(SimulatorBase):
 
   def __init__(self, model = Model()):
     self.model = model
-    self.state = np.array([ 0.0, 0.0, 0.0, 0.0 ])
-    self.force = 0.0
+    self.state = None
+    self.force = None
 
   # Calculate derivative
-  # in: state numpy array [x, xdot, a, adot]
-  # out: derivative numpy array [xdot, xddot, adot, addot]
+  # in:  state array      [x, x', a, a']
+  # out: derivative array [x', x'', a', a'']
   def deriv(self, state):
     m1 = self.model.CART.mass
     m2 = self.model.POLE.mass

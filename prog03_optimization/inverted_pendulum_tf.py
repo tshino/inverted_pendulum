@@ -53,9 +53,8 @@ class InvertedPendulumTF(SimulatorBase):
     I2 = self.model.POLE.inertia
     h = self.model.POLE.height / 2
     
-    #x, xdot, a, adot = state[0], state[1], state[2], state[3]
-    x, xdot, a, adot = state[:,0], state[:,1], state[:,2], state[:,3]
-    #x, xdot, a, adot = tf.unstack(state)
+    x, xdot, a, adot = tf.unstack(state, axis=1)
+    
     c = tf.cos(a)
     s = tf.sin(a)
     
@@ -66,5 +65,4 @@ class InvertedPendulumTF(SimulatorBase):
     xddot = coef * ((h * h * m2 + I2) * b1 + (h * m2 * c) * b2)
     addot = coef * ((h * m2 * c) * b1 + (m1 + m2) * b2)
     
-    #return tf.stack([xdot, xddot, adot, addot])
     return tf.stack([xdot, xddot, adot, addot], axis=1)

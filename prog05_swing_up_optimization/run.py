@@ -179,7 +179,7 @@ def make_animation(state_log, input_log):
     frame.append(plt.text(0.5, -0.6,'x\'=%.5f' % ip.state[1]))
     frame.append(plt.text(0.5, -0.7,'a=%.5f' % ip.state[2]))
     frame.append(plt.text(0.5, -0.8,'a\'=%.5f' % ip.state[3]))
-    frame.append(plt.text(0.5, -0.9,'f=%.5f' % ip.force))
+    frame.append(plt.text(0.5, -0.9,'u=%.5f' % ip.force))
     frame.append(plt.text(0.5, -1.0,'E=%.5f' % ip.total_energy()))
     frames.append(frame)
   
@@ -196,7 +196,8 @@ if __name__ == '__main__':
     initial_gain = np.zeros(8)
     gain = run_optimization(initial_gain)
   else:
-    gain = np.array([ 8, 9, -36, -12, -18, -30, -36, 12])
+    gain = np.array([ 19.83018484,  24.31197344, -96.89532048, -39.28115402,
+                      -2.45729903,  -2.35445905,  -3.52068105,  -0.35042852])
     print(' gain          = ', gain)
 
   #initial_state = np.random.randn(4) * 2.0

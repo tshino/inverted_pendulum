@@ -17,7 +17,7 @@ class SimulatorBase:
     k2 = dt * self.deriv(s0 + k1 / 2)
     k3 = dt * self.deriv(s0 + k2 / 2)
     k4 = dt * self.deriv(s0 + k3)
-    self.state += (k1 + 2 * k2 + 2 * k3 + k4) / 6
+    self.state = self.state + (k1 + 2 * k2 + 2 * k3 + k4) / 6
 
 # Inverted Pendulum Simulator
 class InvertedPendulum(SimulatorBase):
@@ -53,7 +53,7 @@ class InvertedPendulum(SimulatorBase):
     I2 = self.model.POLE.inertia
     h = self.model.POLE.height / 2
     
-    x, xdot, a, adot = state
+    x, xdot, a, adot = np.hsplit(state, 4)
     c = np.cos(a)
     s = np.sin(a)
     
@@ -63,15 +63,14 @@ class InvertedPendulum(SimulatorBase):
     
     xddot = coef * ((h * h * m2 + I2) * b1 + (h * m2 * c) * b2)
     addot = coef * ((h * m2 * c) * b1 + (m1 + m2) * b2)
-    
-    return np.array([xdot, xddot, adot, addot])
+    return np.c_[xdot, xddot, adot, addot]
 
   def total_energy(self):
     m1 = self.model.CART.mass
     m2 = self.model.POLE.mass
     I2 = self.model.POLE.inertia
     h = self.model.POLE.height / 2
-    x, xdot, a, adot = self.state
+    x, xdot, a, adot = np.hsplit(self.state, 4)
     
     T = (m1 + m2) * xdot * xdot / 2
     T += (h * h * m2 + I2) * adot * adot / 2
@@ -80,7 +79,7 @@ class InvertedPendulum(SimulatorBase):
     return T + U
 
   def draw(self, ax):
-    x, xdot, a, adot = self.state
+    x, xdot, a, adot = np.hsplit(self.state, 4)
     s = np.sin(a)
     c = np.cos(a)
     cart = self.model.CART

@@ -11,18 +11,16 @@ from inverted_pendulum_tf import InvertedPendulumTF
 class SwingUpController:
 
   def __init__(self, gain):
-    self.gain = gain
+    self.gain = gain.reshape(1, 8)
 
   def process(self, state):
+    x, xdot, a, adot = np.hsplit(state, 4)
     force = np.where(
-      np.abs(state[2]) < 1.0,
-      np.dot(self.gain[0:4], state),
-      np.dot(self.gain[4:8], np.array([
-        state[0],
-        state[1],
-        state[2] - 3.0 * np.sign(state[2]),
-        state[3]
-      ])))
+      np.abs(a) < 1.0,
+      np.c_[np.sum(self.gain[:,0:4] * state, axis=1)],
+      np.c_[np.sum(self.gain[:,4:8] * np.hstack((
+        x, xdot, a - 3.0 * np.sign(a), adot
+      )), axis=1)])
     force = np.clip(force, -500, 500)
     return force
 
@@ -175,10 +173,11 @@ def make_animation(state_log, input_log):
     ip.force = input
     
     frame = ip.draw(ax)
-    frame.append(plt.text(0.5, -0.5,'x=%.5f' % ip.state[0]))
-    frame.append(plt.text(0.5, -0.6,'x\'=%.5f' % ip.state[1]))
-    frame.append(plt.text(0.5, -0.7,'a=%.5f' % ip.state[2]))
-    frame.append(plt.text(0.5, -0.8,'a\'=%.5f' % ip.state[3]))
+    x, xdot, a, adot = np.hsplit(ip.state, 4)
+    frame.append(plt.text(0.5, -0.5,'x=%.5f' % x))
+    frame.append(plt.text(0.5, -0.6,'x\'=%.5f' % xdot))
+    frame.append(plt.text(0.5, -0.7,'a=%.5f' % a))
+    frame.append(plt.text(0.5, -0.8,'a\'=%.5f' % adot))
     frame.append(plt.text(0.5, -0.9,'u=%.5f' % ip.force))
     frame.append(plt.text(0.5, -1.0,'E=%.5f' % ip.total_energy()))
     frames.append(frame)

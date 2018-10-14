@@ -1,4 +1,5 @@
-﻿import numpy as np
+﻿import math
+import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -14,10 +15,14 @@ class SwingUpController:
     self.gain = gain.reshape(1, 8)
 
   def process(self, state):
+    pi2 = math.pi * 2
     x, xdot, a, adot = np.hsplit(state, 4)
+    a = a - pi2 * np.round(a / pi2)
     force = np.where(
       np.abs(a) < 1.0,
-      np.c_[np.sum(self.gain[:,0:4] * state, axis=1)],
+      np.c_[np.sum(self.gain[:,0:4] * np.hstack((
+        x, xdot, a, adot
+      )), axis=1)],
       np.c_[np.sum(self.gain[:,4:8] * np.hstack((
         x, xdot, a - 3.0 * np.sign(a), adot
       )), axis=1)])
@@ -31,14 +36,16 @@ class SwingUpControllerTF:
     self.gain = gain
 
   def process(self, state):
+    pi2 = math.pi * 2
+    x, xdot, a, adot = tf.unstack(state, axis=1)
+    a = a - pi2 * tf.round(a / pi2)
     force = tf.where(
-      tf.abs(state[:,2]) < 1.0,
-      tf.reduce_sum(self.gain[0:4] * state, axis=1),
+      tf.abs(a) < 1.0,
+      tf.reduce_sum(self.gain[0:4] * tf.stack([
+        x, xdot, a, adot
+      ], axis=1), axis=1),
       tf.reduce_sum(self.gain[4:8] * tf.stack([
-        state[:,0],
-        state[:,1],
-        state[:,2] - 3.0 * tf.sign(state[:,2]),
-        state[:,3]
+        x, xdot, a - 3.0 * tf.sign(a), adot
       ], axis=1), axis=1))
     force = tf.clip_by_value(force, -500, 500)
     return force
@@ -86,6 +93,10 @@ USE_SCIPY_OPTIMIZER = True
 
 
 def calc_state_loss(state):
+  pi2 = math.pi * 2
+  x, xdot, a, adot = tf.unstack(state, axis=1)
+  a = a - pi2 * tf.round(a / pi2)
+  state = tf.stack([x, xdot, a, adot], axis=1)
   dist_a = tf.reduce_sum(tf.square(state), axis=1)
   dist_b = tf.reduce_sum(tf.square(tf.abs(state) - np.array([0, 0, 3, 0])), axis=1)
 
@@ -95,18 +106,17 @@ def calc_state_loss(state):
   # --> minimize dist_a while maximize dist_b  ??
   # --> minimize (dist_a / (dist_a + dist_b))
 
-  return dist_a / (dist_a + 5 * tf.clip_by_value(dist_b, 0, 10))
+  return dist_a * tf.rsqrt(dist_b + 0.0001)
 
 
 def make_objective_function(gain):
   initial_state = np.vstack((
     np.random.randn(200, 4) * 0.0001,
-    np.random.randn(200, 4) * 0.001,
-    np.random.randn(200, 4) * 0.01,
-    np.random.randn(200, 4) * 0.1,
-    np.random.randn(200, 4) * 1.0
+    np.random.randn(200, 4) * 0.5,
+    np.random.randn(200, 4) * 0.5 + np.array([0, 0, 1, 0]),
+    np.random.randn(200, 4) * 5.0 + np.array([0, 0, 3, 0]),
+    np.random.randn(200, 4) * 0.5 + np.array([0, 0, 3, 0])
   ))
-  initial_state = np.clip(initial_state, -1, 1)
   initial_state_loss = calc_state_loss(initial_state)
 
   controller_tf = SwingUpControllerTF(gain)
@@ -195,8 +205,8 @@ if __name__ == '__main__':
     initial_gain = np.zeros(8)
     gain = run_optimization(initial_gain)
   else:
-    gain = np.array([ 19.83018484,  24.31197344, -96.89532048, -39.28115402,
-                      -2.45729903,  -2.35445905,  -3.52068105,  -0.35042852])
+    gain = np.array([  7.11915778,   9.99836946, -45.82392508, -15.65060104,
+                      -0.71462374,  -3.29243137,  -0.93779074,  -1.50918045])
     print(' gain          = ', gain)
 
   #initial_state = np.random.randn(4) * 2.0

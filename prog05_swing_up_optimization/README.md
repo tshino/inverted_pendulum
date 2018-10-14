@@ -1,4 +1,8 @@
-﻿![sample_output.gif](figs/sample_output.gif)
+﻿![sample_output.gif](figs/sample_output.gif)  
+Sample result of v1
+
+![sample_output_v2.gif](figs/sample_output_v2.gif)  
+Sample result of v2 (added on 14 Oct. 2018)
 
 # Optimization of Swing-up Control
 
@@ -19,6 +23,22 @@ As I learned from this challenge, it is very important and actually very difficu
 
 But it is possible.
 The way I found is to carefully design an objective function based on physical simulation of the target system and to design the distribution of initial states for good measurement of the performance.
+
+
+### Addition for v2 (14 Oct. 2018)
+
+There are two versions of the program v1 and v2.
+After I have made v1 and uploaded it, I struggled with improvement for robustness of optimization and finally made v2.
+v2 shows slightly smarter motion than v1.
+
+The differences between them are definition of controller and objective function.
+
+- All the $\theta$ in controller and objective function in v1 are replaced with $\theta - round(\theta / 2\pi) * 2\pi$ in v2. This allows inverse rotation.
+- The loss function $L(x)$ is changed to as below in order to make the optimization more stable.
+
+![loss function v2](figs/prog05-e4.png)
+
+Note that the details described below is based on v1.
 
 
 ## In some detail

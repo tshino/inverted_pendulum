@@ -21,3 +21,11 @@ I think this optimization is a supervised learning rather than a reinforcement l
 because the parameters (feedback gain) are directly updated using derivative of simulation result.
 
 Optimization is fun.
+
+## Changelog
+
+### 2018-08-21
+- Use Scipy's optimizer BFGS instead of Adam
+
+### 2018-08-19
+- Initial version

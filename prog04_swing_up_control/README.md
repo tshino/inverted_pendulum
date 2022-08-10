@@ -21,3 +21,8 @@ The major difficulty of one simple form is, I think, that every parameter affect
 Inverted pendulum has enough nonlinear state space.
 With a switching controller, each parameter of a sub controller affects only a subset of the state space.
 So the parameter tuning becomes much easier.
+
+## Changelog
+
+### 2018-09-22
+- Initial version

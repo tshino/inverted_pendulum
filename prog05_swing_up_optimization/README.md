@@ -66,3 +66,11 @@ The loss function $L(x)$ expresses our objective that the pendulum should be nea
 
 The whole calculation of optimization is performed in a single invocation of SciPy Optimizer via TensorFlow interface.
 The initial values of the variables for the optimization process are $k_1 = [0, 0, 0, 0]^T, k_2 = [0, 0, 0, 0]^T$.
+
+## Changelog
+
+### v2 - 2018-10-14
+- Improved robustness.
+
+### v1 - 2018-09-27
+- Initial version

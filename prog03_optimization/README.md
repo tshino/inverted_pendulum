@@ -24,6 +24,9 @@ Optimization is fun.
 
 ## Changelog
 
+### 2022-08-11
+- Migrated from TensorFlow 1.x to TensorFlow 2.x
+
 ### 2018-08-21
 - Use Scipy's optimizer BFGS instead of Adam
 

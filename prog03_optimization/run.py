@@ -1,5 +1,6 @@
 ﻿import numpy as np
 import tensorflow as tf
+import tensorflow_probability as tfp
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
@@ -97,7 +98,9 @@ def run_simulation_tf(initial_state, controller, duration = SIM_DURATION):
   return ip.state
 
 
-USE_SCIPY_OPTIMIZER = True
+# USE_BFGS_OPTIMIZER = False    # use Adam
+USE_BFGS_OPTIMIZER = True   # use BFGS
+
 
 if __name__ == '__main__':
   print('...creating simulator model')
@@ -109,46 +112,51 @@ if __name__ == '__main__':
   gain = tf.Variable(np.array([ 0.0, 0.0, 0.0, 0.0 ]))
   #gain = tf.Variable(np.array([ 500.0, 30.0, -1000.0, -30.0 ]))
   
-  controller_tf = StateFeedbackControllerTF(gain)
-  last_state = run_simulation_tf(initial_state, controller_tf, 1.0)
+  loss = None
   
-  clamped_last_state = tf.clip_by_value(last_state, -1, 1)
-  loss = tf.reduce_mean(tf.square(clamped_last_state))
-  
-  if USE_SCIPY_OPTIMIZER:
-    optimizer = tf.contrib.opt.ScipyOptimizerInterface(loss)
+  def calc_loss(gain):
+    global loss
+    controller_tf = StateFeedbackControllerTF(gain)
+    last_state = run_simulation_tf(initial_state, controller_tf, 1.0)
+    clamped_last_state = tf.clip_by_value(last_state, -1, 1)
+    loss = tf.reduce_mean(tf.square(clamped_last_state))
+    return loss
+
+  if USE_BFGS_OPTIMIZER:
+    @tf.function
+    def optimize():
+      return tfp.optimizer.lbfgs_minimize(
+        lambda x: tfp.math.value_and_gradient(calc_loss, x),
+        initial_position=tf.constant(np.array([ 0.0, 0.0, 0.0, 0.0 ])),
+        tolerance=1e-5
+      )
   else:
-    optimizer = tf.train.AdamOptimizer(0.5)
-    #optimizer = tf.train.GradientDescentOptimizer(0.5)
-    train = optimizer.minimize(loss)
-  
-  print('...starting ML session')
-  
-  sess = tf.Session()
-  sess.run(tf.global_variables_initializer())
+    optimizer = tf.keras.optimizers.Adam(0.5)
   
   print('...initial evaluation')
-  
-  print(' gain =', sess.run(gain))
-  print(' last state =', sess.run(last_state))
-  print(' loss =', sess.run(loss))
-  
+  calc_loss(gain)
+  print(' gain =', gain.numpy())
+  print(' loss =', loss.numpy())
+
   print('...training')
   
-  if USE_SCIPY_OPTIMIZER:
-    optimizer.minimize(sess)
-    print(' gain =', sess.run(gain))
-    print(' loss =', sess.run(loss))
+  if USE_BFGS_OPTIMIZER:
+    results = optimize()
+    print(f' converged: {results.converged}')
+    print(f' # of iterations: {results.num_iterations}')
+    print(f' gain = {results.position}')
+    print(f' loss = {results.objective_value}')
+    gain = results.position
   else:
     for i in range(1000):
       print('=== epoch #%d ===' % (i + 1))
-      sess.run(train)
-      print(' gain =', sess.run(gain))
-      print(' loss =', sess.run(loss))
+      optimizer.minimize(lambda: calc_loss(gain), [gain])
+      print(' gain =', gain.numpy())
+      print(' loss =', loss.numpy())
   
   print('...making animation using trained controller')
   
-  gain = sess.run(gain)
+  gain = gain.numpy()
   #gain = np.array([ 500, 30, -1000, -30 ])
   
   controller = StateFeedbackController(gain)

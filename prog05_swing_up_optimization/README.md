@@ -69,8 +69,9 @@ The initial values of the variables for the optimization process are $k_1 = [0, 
 
 ## Changelog
 
-### v2 - 2018-10-14
-- Improved robustness.
+### 2018-10-14
+- Added v2:
+    - Improved robustness.
 
-### v1 - 2018-09-27
-- Initial version
+### 2018-09-27
+- Initial version (v1)

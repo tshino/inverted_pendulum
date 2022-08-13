@@ -67,7 +67,18 @@ The loss function $L(x)$ expresses our objective that the pendulum should be nea
 The whole calculation of optimization is performed in a single invocation of SciPy Optimizer via TensorFlow interface.
 The initial values of the variables for the optimization process are $k_1 = [0, 0, 0, 0]^T, k_2 = [0, 0, 0, 0]^T$.
 
+
+## Migration from TensorFlow 1.x to TensorFlow 2.x (2022-08-13)
+
+All these experiments above have been done with TensorFlow 1.x. Now, TensorFlow 1.x is obsolete and not recommended. So I have migrated the scripts to TensorFlow 2.x and added them as different names with a prefix `_tf2` (`run_v1_tf2.py` and `run_v2_tf2.py`).
+
+But unfortunately, the `_tf2` versions seem like they rarely get success to optimize the controller. I guess the cause is in the different implementation of the L-BFGS optimizer and/or the difference in its default hyperparameters.
+
+
 ## Changelog
+
+### 2022-18-13
+- Added `_tf2` versions to run with TensorFlow 2.x.
 
 ### 2018-10-14
 - Added v2:

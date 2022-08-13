@@ -74,6 +74,13 @@ All these experiments above have been done with TensorFlow 1.x. Now, TensorFlow 
 
 But unfortunately, the `_tf2` versions seem like they rarely get success to optimize the controller. I guess the cause is in the different implementation of the L-BFGS optimizer and/or the difference in its default hyperparameters.
 
+If you want to run the older scripts (`run_v1.py` and `run_v2.py`), it would need dependencies below:
+```
+tensorflow<2
+numpy>=1.18
+matplotlib>=3.0
+```
+The older `requirements.txt` is removed intentionally.
 
 ## Changelog
 

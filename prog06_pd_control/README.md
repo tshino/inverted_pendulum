@@ -1,4 +1,4 @@
-<video src="figs/sample_output.mp4" style="width:100%" loop autoplay muted></video>
+https://user-images.githubusercontent.com/732920/185763491-f1fde0c7-ef82-4716-ac0f-7c2682142635.mp4
 
 # PD Control
 

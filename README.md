@@ -7,3 +7,4 @@ Learning from experiments is fun.
 3. [Optimization of State Feedback](prog03_optimization/)
 4. [Swing-up Control](prog04_swing_up_control/)
 5. [Optimization of Swing-up Control](prog05_swing_up_optimization/)
+6. [PD Control](prog06_pd_control/)

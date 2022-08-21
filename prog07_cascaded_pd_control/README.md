@@ -1,3 +1,5 @@
+https://user-images.githubusercontent.com/732920/185798783-b69f1d3c-990a-4f65-a21a-9fee59c081f8.mp4
+
 <video src="figs/sample_output.mp4" style="width:100%" loop autoplay muted controls></video>
 
 # Cascaded PD Control

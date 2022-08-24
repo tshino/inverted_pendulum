@@ -20,8 +20,12 @@ I was surprised that how easy with this controller to swing up a pendulum starti
 
 The secret of this magic is the heuristic gain I inserted into the system (see it in the above diagram). The output value of the PD controller is multiplied by the heuristic gain to compensate for varying sensitivity between the input force and the pendulum angle. As a result, the pendulum moves with its angular acceleration approximately proportional to the original output of the controller. I think it means that the pendulum system is virtually linearized. That is the reason why a PD controller can perform swinging up of a pendulum.
 
+https://user-images.githubusercontent.com/732920/186449104-e13b2801-ef06-4805-aa6d-f810c9090d74.mp4
+
 <video src="figs/swing_up1.mp4" style="width:100%" loop autoplay muted controls></video>
 `initial_state = np.array([ 0.0, 0.0, 3.1416, 0.0 ])`
+
+https://user-images.githubusercontent.com/732920/186449161-d4a04207-8fd1-48d2-8db2-25d1a2ac0d63.mp4
 
 <video src="figs/swing_up2.mp4" style="width:100%" loop autoplay muted controls></video>
 `initial_state = np.array([ 0.0, 0.0, -8.25, 0.0 ])`
